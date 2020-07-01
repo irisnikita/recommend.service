@@ -29,7 +29,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/public', express.static('public'));
 app.get('/', (req, res) => {
-    res.send('Hello mọi người');
+    res.send({
+        nameService: 'Recommend service',
+        port: PORT
+    });
 });
 
 require('./routes/post')(app);

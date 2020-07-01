@@ -11,7 +11,7 @@ const db = mongoose.connection;
 require('dotenv').config();
 
 // Define server
-const PORT = process.env.PORT || 8079;
+const PORT = process.env.PORT || 8102;
 const app = express();
 const server = http.createServer(app);
 

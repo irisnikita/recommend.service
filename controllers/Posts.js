@@ -16,12 +16,30 @@ exports.createPost = function (req, res) {
     });
 };
 
+const convertChar = (string) => {
+    string = string.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s/g, '-').toLowerCase();
+
+    return string;
+};
+
 exports.getPaths = async function (req, res) {
     Post.find({}, '_id title filter.province.name filter.district').exec((err, results) => {
         if (!err) {
+            const newResults = results.map(result => ({
+                title: convertChar(result.title),
+                province: convertChar(result.filter.province.name),
+                district: convertChar(result.filter.district.name),
+                id: result._id
+            }))
+
             res.json({
                 data: {
-                    paths: results
+                    paths: newResults
                 }
             });
         } else {

@@ -34,7 +34,8 @@ let UserSchema = new Schema({
         type: String,
         default: ''
     },
-    phoneNumber: String
+    phoneNumber: String,
+    transactions: Array
 });
 
 UserSchema.methods.comparePassword = function(pass) {

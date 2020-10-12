@@ -89,7 +89,8 @@ let login = async (req, res) => {
                                 userName: user.userName,
                                 email: user.email,
                                 avatar: user.avatar,
-                                phoneNumber: user.phoneNumber
+                                phoneNumber: user.phoneNumber,
+                                transactions: user.transactions ? user.transactions.length : 0
                             }}
                     });
                 }
@@ -118,6 +119,56 @@ let findOne = async (req, res) => {
         })
     } catch (error) {
         console.log(error)
+    }
+}
+
+let update = async (req, res) => {
+    try {
+        User.findOneAndUpdate(req.params.id, req.body).exec((err, results) => {
+            if(!err) {
+                let user = results
+
+                user.pass = undefined;
+
+                res.json({
+                    status: res.statusCode,
+                    message: 'Update results success',
+                    data: {
+                        user: user
+                    }
+                })
+            }
+        })
+    } catch (error) {
+        console.log("update -> error", error)
+    }
+}
+
+let getTransactions = async (req, res) => {
+    const {userId} = req.query;
+    console.log("getTransactions -> id", userId)
+
+    try {
+        User.findById(userId, 'transactions').exec((err, results) => {
+            if(!err) {
+                res.json({
+                    status: res.statusCode,
+                    message: 'Get results success',
+                    data: {
+                        transactions: results
+                    }
+                })
+            } else {
+                res.json({
+                    status: res.statusCode,
+                    message: 'Get results failed',
+                    data: {}
+                })
+            }
+        })
+    } catch (error) {
+    console.log("getTransactions -> error", error)
+        
     }
 }
 
@@ -162,6 +213,8 @@ let refreshToken = async (req, res) => {
 module.exports = {
     register,
     findOne,
+    update,
+    getTransactions,
     login: login,
     refreshToken: refreshToken
 };

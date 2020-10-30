@@ -1,4 +1,5 @@
 const Post = require('../model/post.model');
+const Search = require('../model/search')
 
 exports.createPost = function (req, res) {
     const post = new Post(req.body);
@@ -55,7 +56,7 @@ exports.findPost = async function (req, res) {
 
     if (id) {
 
-        Post.findOne({_id: id}).populate('contact').exec((err, results) => {
+        Post.findOne({ _id: id }).populate('contact').exec((err, results) => {
             if (!err) {
                 res.json({
                     data: {
@@ -132,7 +133,7 @@ exports.listPost = async function (req, res) {
             { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
             { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
             { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
-            {  status: true },
+            { status: true },
         ]).countDocuments();
 
     Post
@@ -145,7 +146,7 @@ exports.listPost = async function (req, res) {
             { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
             { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
             { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
-            {  status: true }
+            { status: true }
         ])
         .skip(page * +limit).limit(+limit)
         .sort('-startTime')
@@ -218,3 +219,42 @@ exports.deletePost = function (req, res) {
         }
     });
 };
+
+const aggregate = (valueSearch) => {
+    return (
+        Search.aggregate([
+            {
+                '$search': {
+                    'text': {
+                        'query': valueSearch,
+                        'path': 'value'
+                    }
+                }
+
+            },
+            {
+                "$limit": 10
+            }
+        ])
+    )
+}
+
+exports.searchPost = async (req, res) => {
+    console.log("exports.searchPost -> req", req.query)
+    const { valueSearch = '' } = req.query;
+
+    if (valueSearch !== '') {
+        aggregate(valueSearch).exec((err, results) => {
+            if (!err) {
+                res.json({
+                    data: results
+                })
+            }
+        })
+    } else {
+        res.json({
+            data: []
+        })
+    }
+
+}

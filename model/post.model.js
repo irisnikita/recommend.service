@@ -11,7 +11,7 @@ let PostSchema = new Schema({
     address: Object,
     area: Number,
     contactId: String,
-    contact: {type: Schema.Types.ObjectId, ref: 'user'},
+    contact: { type: Schema.Types.ObjectId, ref: 'user' },
     description: String,
     filter: Object,
     images: Array,

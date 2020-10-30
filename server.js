@@ -16,8 +16,8 @@ const app = express();
 const server = http.createServer(app);
 
 // Connect mongoose
-mongoose.connect('mongodb+srv://nltruongvi:TjmWjm824594@cluster0-vzakd.mongodb.net/vmotel_search?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true,  useCreateIndex: true})
-    .then(() => {console.log('MongoDB connected')});
+mongoose.connect('mongodb+srv://nltruongvi:TjmWjm824594@cluster0-vzakd.mongodb.net/vmotel_search?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+    .then(() => { console.log('MongoDB connected') });
 
 mongoose.set('useFindAndModify', false);
 

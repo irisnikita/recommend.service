@@ -1,5 +1,4 @@
 const {ObjectID} = require('mongodb');
-const { type } = require('../redis');
 
 // Libraries
 const mongoose = require('mongoose'),

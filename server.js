@@ -43,8 +43,8 @@ require('./routes/service')(app);
 require('./routes/defaultService')(app);
 require('./routes/unit')(app);
 require('./routes/upload')(app);
-require('./routes/customer')(app);
-require('./routes/contract')(app);
+// require('./routes/customer')(app);
+// require('./routes/contract')(app);
 require('./routes/comment')(app);
 
 server.listen(PORT, () => {

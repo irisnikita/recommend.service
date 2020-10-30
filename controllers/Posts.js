@@ -162,6 +162,17 @@ exports.listPost = async function (req, res) {
         });
 };
 
+
+exports.getListCategory = function (req, res) {
+    Search.find().limit(10).exec((err, results) => {
+        if(!err) {
+            res.json({
+                data: results
+            })
+        }
+    })
+}
+
 exports.updateStatus = function (req, res) {
     const { id = '' } = req.params;
     const { status = false } = req.body;
@@ -219,6 +230,7 @@ exports.deletePost = function (req, res) {
         }
     });
 };
+
 
 const aggregate = (valueSearch) => {
     return (

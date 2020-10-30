@@ -4,13 +4,15 @@ const postRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 
 // Controler
-const { createPost, listPost, getPaths, findPost, findByUser, deletePost, updateStatus, updatePost, searchPost } = require('../controllers/Posts');
+const { createPost, listPost, getPaths, findPost, findByUser, deletePost, updateStatus, updatePost, searchPost, getListCategory } = require('../controllers/Posts');
 
 const postRouter = (app) => {
 
     postRouters.get('/get-list', listPost);
 
     postRouters.get('/get-paths', getPaths);
+
+    postRouters.get('/get-category', getListCategory);
 
     postRouters.get('/get-post-user', authMiddleware.isAuth, findByUser);
 
@@ -27,6 +29,7 @@ const postRouter = (app) => {
     postRouters.put('/update/:id?', updateStatus);
 
     postRouters.put('/update-post/:id?', updatePost);
+
 
     app.use('/post', postRouters);
 };

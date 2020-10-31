@@ -165,7 +165,7 @@ exports.listPost = async function (req, res) {
 
 exports.getListCategory = function (req, res) {
     Search.find().limit(10).exec((err, results) => {
-        if(!err) {
+        if (!err) {
             res.json({
                 data: results
             })
@@ -252,7 +252,6 @@ const aggregate = (valueSearch) => {
 }
 
 exports.searchPost = async (req, res) => {
-    console.log("exports.searchPost -> req", req.query)
     const { valueSearch = '' } = req.query;
 
     if (valueSearch !== '') {

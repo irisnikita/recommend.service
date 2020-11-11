@@ -120,46 +120,94 @@ exports.listPost = async function (req, res) {
         streetId = 'all',
         priceStart = 0,
         priceEnd = 50000000,
-        levelId = 'all'
+        levelId = 'all',
+        search
     } = req.query;
 
-    const count = await Post
-        .find()
-        .and([
-            { area: { $lte: areaEnd, $gte: areaStart } },
-            { price: { $lte: priceEnd, $gte: priceStart } },
-            { 'filter.optionType.id': optionTypeId !== 'all' ? optionTypeId : { $exists: true } },
-            { 'filter.province.code': provinceCode !== 'ALL' ? provinceCode : { $exists: true } },
-            { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
-            { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
-            { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
-            { status: true },
-        ]).countDocuments();
-
-    Post
-        .find()
-        .and([
-            { area: { $lte: areaEnd, $gte: areaStart } },
-            { price: { $lte: priceEnd, $gte: priceStart } },
-            { 'filter.optionType.id': optionTypeId !== 'all' ? optionTypeId : { $exists: true } },
-            { 'filter.province.code': provinceCode !== 'ALL' ? provinceCode : { $exists: true } },
-            { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
-            { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
-            { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
-            { status: true }
-        ])
-        .skip(page * +limit).limit(+limit)
-        .sort('-startTime')
-        .exec((err, results) => {
+    if (search) {
+        Post.aggregate([
+            {
+                "$search": {
+                    "compound": {
+                        "must": [
+                            {
+                                "text": {
+                                    "query": `${search}`,
+                                    "path": "title"
+                                }
+                            }
+                        ],
+                        "should": [
+                            {
+                                "text": {
+                                    "query": `${search}`,
+                                    "path": "address.addressTitle"
+                                }
+                            },
+                            {
+                                "text": {
+                                    "query": `${search}`,
+                                    "path": "description"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]).exec((err, results) => {
             if (!err) {
                 res.json({
                     data: {
                         posts: results,
-                        total: count
+                        total: results.length
                     }
-                });
+                })
+            } else {
+                res.json({
+                    code: "error",
+                    status: 0
+                })
             }
-        });
+        })
+    } else {
+        const count = await Post
+            .find()
+            .and([
+                { area: { $lte: areaEnd, $gte: areaStart } },
+                { price: { $lte: priceEnd, $gte: priceStart } },
+                { 'filter.optionType.id': optionTypeId !== 'all' ? optionTypeId : { $exists: true } },
+                { 'filter.province.code': provinceCode !== 'ALL' ? provinceCode : { $exists: true } },
+                { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
+                { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
+                { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
+                { status: true },
+            ]).countDocuments();
+
+        Post
+            .find()
+            .and([
+                { area: { $lte: areaEnd, $gte: areaStart } },
+                { price: { $lte: priceEnd, $gte: priceStart } },
+                { 'filter.optionType.id': optionTypeId !== 'all' ? optionTypeId : { $exists: true } },
+                { 'filter.province.code': provinceCode !== 'ALL' ? provinceCode : { $exists: true } },
+                { 'filter.district.name': districtName !== 'all' ? districtName : { $exists: true } },
+                { 'filter.street.id': streetId !== 'all' ? streetId : { $exists: true } },
+                { 'option.level.id': levelId !== 'all' ? levelId : { $exists: true } },
+                { status: true }
+            ])
+            .skip(page * +limit).limit(+limit)
+            .sort('-startTime')
+            .exec((err, results) => {
+                if (!err) {
+                    res.json({
+                        data: {
+                            posts: results,
+                            total: count
+                        }
+                    });
+                }
+            });
+    }
 };
 
 
